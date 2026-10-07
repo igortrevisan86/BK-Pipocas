@@ -10,37 +10,37 @@ const tamanhos = [
         id: "350ml",
         nome: "350 ml",
         preco: 18.00,
-        icone: "P",
+        icone: "🍿",
         descricao: "Pote P (Individual)"
     },
     {
         id: "500ml",
         nome: "500 ml",
         preco: 25.00,
-        icone: "M",
+        icone: "🍿",
         descricao: "Pote M (Ideal para compartilhar)"
     },
     {
         id: "1litro",
-        nome: "1 litro",
+        nome: "Balde 1 litro",
         preco: 40.00,
-        icone: "G",
+        icone: "🪣",
         descricao: "Pote G (Para a galera!)"
     }
 ];
 
 const sabores = [
-    { id: "ninho", nome: "Ninho", icone: "N" },
-    { id: "nutella", nome: "Nutella", icone: "N" },
-    { id: "ovomaltine", nome: "Ovomaltine", icone: "O" },
-    { id: "kinder", nome: "Kinder Bueno", icone: "K" },
-    { id: "morango", nome: "Morango", icone: "M" },
+    { id: "ninho", nome: "Ninho", icone: "🥛" },
+    { id: "nutella", nome: "Nutella", icone: "🍫" },
+    { id: "ovomaltine", nome: "Ovomaltine", icone: "✨" },
+    { id: "kinder", nome: "Kinder Bueno", icone: "🌰" },
+    { id: "morango", nome: "Morango", icone: "🍓" },
 ];
 
 const adicionais = [
-    { id: "calda_nutella", nome: "Calda de Nutella", preco: 3.00, icone: "CN" },
-    { id: "leite_po", nome: "Leite Ninho Extra", preco: 2.00, icone: "LN" },
-    { id: "confete", nome: "Confetes", preco: 2.00, icone: "CF" }
+    { id: "calda_nutella", nome: "Calda de Nutella", preco: 3.00, icone: "🍯" },
+    { id: "leite_po", nome: "Leite Ninho Extra", preco: 2.00, icone: "🥛" },
+    { id: "confete", nome: "Confetes", preco: 2.00, icone: "🎊" }
 ];
 
 // 2. ESTADO DA APLICAÇÃO (SELEÇÃO ATUAL E CARRINHO)
@@ -166,7 +166,7 @@ function selecionarSabor(nomeSabor) {
     } else {
         // Se tentar escolher mais de 2 sabores
         if (saboresSelecionados.length >= 2) {
-            mostrarToast("Você pode escolher no máximo 2 sabores por pote.");
+            mostrarToast("Você pode escolher no máximo 2 sabores por pote. 🍿");
             return;
         }
         saboresSelecionados.push(nomeSabor);
@@ -267,7 +267,7 @@ function atualizarResumoPote() {
 // 8. ADICIONAR AO CARRINHO
 function adicionarAoCarrinho() {
     if (!tamanhoSelecionado || saboresSelecionados.length === 0) {
-        mostrarToast("Selecione o tamanho e ao menos 1 sabor antes de adicionar!");
+        mostrarToast("Selecione o tamanho e ao menos 1 sabor antes de adicionar! 🍿");
         return;
     }
 
@@ -305,7 +305,7 @@ function adicionarAoCarrinho() {
     }
 
     salvarEAtualizarCarrinho();
-    mostrarToast("Produto adicionado ao carrinho!");
+    mostrarToast("✅ Produto adicionado ao carrinho!");
 
     // Limpa a seleção para o cliente poder montar outro pote facilmente
     resetarSelecaoPote();
@@ -380,7 +380,7 @@ function atualizarCarrinho() {
     if (carrinho.length === 0) {
         cartBody.innerHTML = `
             <div class="empty-cart">
-                <img src="favicon.svg" alt="" class="empty-cart-icon-img">
+                <div class="empty-cart-icon">🍿</div>
                 <p>Seu carrinho está vazio</p>
                 <button class="btn btn-primary" onclick="fecharCarrinho()">Voltar ao cardápio</button>
             </div>
@@ -413,7 +413,7 @@ function atualizarCarrinho() {
         cartItemEl.className = "cart-item";
         cartItemEl.innerHTML = `
             <div class="cart-item-info">
-                <div class="cart-item-title">Pote ${item.tamanho}</div>
+                <div class="cart-item-title">🍿 Pote ${item.tamanho}</div>
                 <div class="cart-item-sabores">Sabores: ${item.sabores.join(" + ")}</div>
                 ${adicionaisHtml}
                 ${obsHtml}
@@ -448,14 +448,14 @@ function gerarMensagemWhatsApp() {
     const nome = document.getElementById("cliente-nome").value.trim() || "Cliente";
     const tipoEntrega = document.querySelector('input[name="entrega-tipo"]:checked').value;
     const formaPagamento = document.getElementById("pagamento-tipo").options[document.getElementById("pagamento-tipo").selectedIndex].text;
-    
+
     let mensagem = `*Olá! Me chamo ${nome} e gostaria de fazer um pedido na BK Pipocas Gourmet*\n\n*ITENS DO PEDIDO:*\n----------------------------------------\n`;
 
     let subtotalPotes = 0;
     carrinho.forEach((item, index) => {
         const itemSubtotal = item.preco * item.quantidade;
         subtotalPotes += itemSubtotal;
-        
+
         mensagem += `*${index + 1}. Pote ${item.tamanho}* (${item.quantidade}x)\n`;
         mensagem += `   • Sabores: ${item.sabores.join(" + ")}\n`;
         if (item.adicionais && item.adicionais.length > 0) {
@@ -469,7 +469,7 @@ function gerarMensagemWhatsApp() {
 
     mensagem += `----------------------------------------\n`;
     mensagem += `*DADOS DA ENTREGA & PAGAMENTO:*\n`;
-    
+
     if (tipoEntrega === "retirada") {
         mensagem += `- Retirada na Loja (Grátis)\n`;
     } else {
@@ -481,7 +481,7 @@ function gerarMensagemWhatsApp() {
     }
 
     mensagem += `- Pagamento: ${formaPagamento}\n`;
-    
+
     const pagTipoValue = document.getElementById("pagamento-tipo").value;
     if (pagTipoValue === "dinheiro") {
         const troco = document.getElementById("pagamento-troco").value.trim();
@@ -491,14 +491,12 @@ function gerarMensagemWhatsApp() {
     }
 
     const taxaEntregaMsg = calcularTaxaEntrega();
-    const total = calcularTotal();
     mensagem += `----------------------------------------\n`;
     mensagem += `*SUBTOTAL POTES: R$ ${subtotalPotes.toFixed(2).replace(".", ",")}*\n`;
     mensagem += taxaEntregaMsg > 0
         ? `*TAXA DE ENTREGA: R$ ${taxaEntregaMsg.toFixed(2).replace(".", ",")}*\n`
         : `*TAXA DE ENTREGA: Grátis (Retirada na Loja)*\n`;
-    mensagem += `*VALOR TOTAL DO PEDIDO: R$ ${total.toFixed(2).replace(".", ",")}*\n\n`;
-    mensagem += "Aguardo a confirmação! Obrigado(a).";
+    mensagem += "\nAguardo a confirmação! Obrigado(a).";
 
     return mensagem;
 }
