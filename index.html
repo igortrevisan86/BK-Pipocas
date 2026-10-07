@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BK Pipocas Gourmet | Cardápio Digital</title>
+    <meta name="description" content="Cardápio digital BK Pipocas Gourmet. Monte seu pote com os melhores sabores artesanais e peça diretamente pelo WhatsApp!">
+    <link rel="stylesheet" href="style.css">
+    <!-- Fontes Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Header / Cabeçalho -->
+    <header class="header">
+        <div class="container header-container">
+            <a href="#" class="logo">
+                <span class="logo-icon">🍿</span>
+                <div class="logo-text">
+                    <span class="brand-title">BK PIPOCAS</span>
+                    <span class="brand-subtitle">GOURMET</span>
+                </div>
+            </a>
+            <button id="cart-btn" class="cart-btn" aria-label="Abrir carrinho de compras">
+                <span class="cart-icon">🛒</span>
+                <span class="cart-label">Carrinho</span>
+                <span id="cart-count" class="cart-count">0</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Banner Principal -->
+    <section class="banner">
+        <div class="container banner-container">
+            <div class="banner-badge">✨ Pipocas Artesanais Premium</div>
+            <h1 class="banner-title">BK Pipocas Gourmet</h1>
+            <p class="banner-subtitle">Escolha seus sabores favoritos e monte seu pote dos sonhos!</p>
+            <p class="banner-info">🍿 Escolha até <strong>2 sabores</strong> em cada pote.</p>
+            <a href="#montar-pote" class="btn btn-primary banner-btn">Montar meu pote ✨</a>
+        </div>
+    </section>
+
+    <!-- Seção de Notificação/Toast -->
+    <div id="toast" class="toast" aria-live="polite"></div>
+
+    <!-- Seção principal de Montagem do Pote -->
+    <main class="container main-content" id="montar-pote">
+        <div class="section-header">
+            <span class="section-tag">Passo a Passo</span>
+            <h2 class="section-title">Monte sua Pipoca</h2>
+            <p class="section-desc">Personalize o tamanho e misture os melhores recheios</p>
+        </div>
+
+        <!-- Passo 1: Escolha do Tamanho -->
+        <section class="builder-step">
+            <div class="step-title-container">
+                <span class="step-number">1</span>
+                <h3>Escolha o Tamanho do Pote</h3>
+            </div>
+            <div id="tamanhos-grid" class="tamanhos-grid">
+                <!-- Inserido dinamicamente via JS -->
+            </div>
+        </section>
+
+        <!-- Passo 2: Escolha dos Sabores -->
+        <section class="builder-step">
+            <div class="step-title-container">
+                <span class="step-number">2</span>
+                <h3>Escolha até 2 Sabores</h3>
+                <span id="sabores-contador" class="sabores-contador">Sabores escolhidos: 0/2</span>
+            </div>
+            <div id="sabores-grid" class="sabores-grid">
+                <!-- Inserido dinamicamente via JS -->
+            </div>
+        </section>
+
+        <!-- Passo 3: Adicionais Extra -->
+        <section class="builder-step">
+            <div class="step-title-container">
+                <span class="step-number">3</span>
+                <h3>Adicionais Extras (Opcional)</h3>
+                <span class="step-optional">Turbine seu pote!</span>
+            </div>
+            <div id="adicionais-grid" class="tamanhos-grid adicionais-grid">
+                <!-- Inserido dinamicamente via JS -->
+            </div>
+        </section>
+
+        <!-- Passo 4: Observações -->
+        <section class="builder-step">
+            <div class="step-title-container">
+                <span class="step-number">4</span>
+                <h3>Observações (Opcional)</h3>
+            </div>
+            <textarea id="observacoes" class="observacoes-input" placeholder="Ex: Pouca calda, para presente, etc..." rows="3"></textarea>
+        </section>
+
+        <!-- Resumo do Pote Atual -->
+        <section class="pote-resumo-card">
+            <div class="resumo-header">
+                <h3>🍿 Resumo do seu Pote</h3>
+            </div>
+            <div class="resumo-details">
+                <div class="resumo-row">
+                    <span class="resumo-label">Tamanho:</span>
+                    <span id="resumo-tamanho" class="resumo-value placeholder">Selecione um tamanho</span>
+                </div>
+                <div class="resumo-row">
+                    <span class="resumo-label">Sabores:</span>
+                    <span id="resumo-sabores" class="resumo-value placeholder">Selecione pelo menos 1 sabor</span>
+                </div>
+                <div class="resumo-row" id="row-adicionais" style="display: none;">
+                    <span class="resumo-label">Adicionais:</span>
+                    <span id="resumo-adicionais" class="resumo-value">Nenhum</span>
+                </div>
+                <div class="resumo-row resumo-preco-row">
+                    <span class="resumo-label">Preço:</span>
+                    <span id="resumo-preco" class="resumo-preco">R$ 0,00</span>
+                </div>
+            </div>
+            <button id="add-to-cart-btn" class="btn btn-add-cart" disabled>
+                <span>Adicionar ao carrinho</span>
+                <span class="btn-icon">🛒</span>
+            </button>
+        </section>
+    </main>
+
+    <!-- Modal do Carrinho -->
+    <div id="cart-modal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><span>🛒</span> Meu Carrinho</h2>
+                <button id="close-cart-btn" class="close-btn" aria-label="Fechar carrinho">&times;</button>
+            </div>
+            
+            <div id="cart-body" class="modal-body">
+                <!-- Conteúdo do carrinho via JS -->
+            </div>
+
+            <div id="cart-footer" class="modal-footer">
+                <div class="cart-total-container">
+                    <span class="total-label">Total do Pedido:</span>
+                    <span id="cart-total-price" class="total-price">R$ 0,00</span>
+                </div>
+                <button id="whatsapp-btn" class="btn btn-whatsapp">
+                    <span class="whatsapp-icon">💬</span>
+                    <span>Pedir pelo WhatsApp</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer / Rodapé -->
+    <footer class="footer">
+        <div class="container footer-container">
+            <p><strong>BK Pipocas Gourmet</strong> &copy; 2026 - Todos os direitos reservados.</p>
+            <p class="footer-sub">Qualidade, carinho e sabor inigualável em cada pote. 🍿✨</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
