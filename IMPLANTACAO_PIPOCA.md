@@ -48,9 +48,10 @@ Este documento contém o planejamento completo, cronograma por fases e checklist
 - [ ] Seletor de forma de pagamento (PIX, Cartão, Dinheiro com troco)
 - [ ] Cálculo/Opção de taxa de entrega no resumo do WhatsApp
 
-### 🟡 Fase 7: Publicação, SEO & Domínio Próprio
+### 🟢 Fase 7: Publicação, GitHub & Hospedagem
+- [x] Repositório criado e código enviado para o GitHub: [https://github.com/igortrevisan86/BK-Pipocas](https://github.com/igortrevisan86/BK-Pipocas)
+- [ ] Ativação do GitHub Pages para hospedar o site gratuitamente em `https://igortrevisan86.github.io/BK-Pipocas/`
 - [ ] Otimização de imagens e ícones (Favicon personalizado da pipoca)
-- [ ] Hospedagem gratuita no Vercel ou Netlify
 - [ ] Configuração do número real do WhatsApp da loja em `script.js`
 - [ ] Testes de usabilidade e performance (Google Lighthouse 90+)
 
