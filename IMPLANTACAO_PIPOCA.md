@@ -59,10 +59,11 @@ Este documento contém o planejamento completo, cronograma por fases e checklist
 
 ## 🛠️ Como Testar Localmente
 
-O servidor de desenvolvimento local já está ativo:
+Para rodar o site em sua máquina e fazer testes:
 
-1. **Acesse no navegador**:
-   👉 [http://localhost:3000](http://localhost:3000)
+1. **Inicie o servidor (Modo Fácil)**:
+   - Dê um duplo clique no arquivo `inicie_servidor.bat` localizado na pasta do projeto.
+   - Ele iniciará o servidor e abrirá o navegador automaticamente em `http://localhost:3000`.
 
 2. **Fluxo de Teste Sugerido**:
    1. Escolha o tamanho do pote (ex: 500 ml - R$ 25,00).
