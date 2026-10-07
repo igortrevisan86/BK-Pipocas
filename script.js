@@ -10,37 +10,37 @@ const tamanhos = [
         id: "350ml",
         nome: "350 ml",
         preco: 18.00,
-        icone: "🍿",
+        icone: "P",
         descricao: "Pote P (Individual)"
     },
     {
         id: "500ml",
         nome: "500 ml",
         preco: 25.00,
-        icone: "🍿🍿",
+        icone: "M",
         descricao: "Pote M (Ideal para compartilhar)"
     },
     {
         id: "1litro",
         nome: "1 litro",
         preco: 40.00,
-        icone: "🪣",
+        icone: "G",
         descricao: "Pote G (Para a galera!)"
     }
 ];
 
 const sabores = [
-    { id: "ninho", nome: "Ninho", icone: "🥛" },
-    { id: "nutella", nome: "Nutella", icone: "🍫" },
-    { id: "ovomaltine", nome: "Ovomaltine", icone: "✨" },
-    { id: "kinder", nome: "Kinder Bueno", icone: "🌰" },
-    { id: "morango", nome: "Morango", icone: "🍓" },
+    { id: "ninho", nome: "Ninho", icone: "N" },
+    { id: "nutella", nome: "Nutella", icone: "N" },
+    { id: "ovomaltine", nome: "Ovomaltine", icone: "O" },
+    { id: "kinder", nome: "Kinder Bueno", icone: "K" },
+    { id: "morango", nome: "Morango", icone: "M" },
 ];
 
 const adicionais = [
-    { id: "calda_nutella", nome: "Calda de Nutella", preco: 3.00, icone: "🍯" },
-    { id: "leite_po", nome: "Leite Ninho Extra", preco: 2.00, icone: "🥛" },
-    { id: "confete", nome: "Confetes", preco: 2.00, icone: "🎊" }
+    { id: "calda_nutella", nome: "Calda de Nutella", preco: 3.00, icone: "CN" },
+    { id: "leite_po", nome: "Leite Ninho Extra", preco: 2.00, icone: "LN" },
+    { id: "confete", nome: "Confetes", preco: 2.00, icone: "CF" }
 ];
 
 // 2. ESTADO DA APLICAÇÃO (SELEÇÃO ATUAL E CARRINHO)
@@ -71,6 +71,16 @@ const cartBody = document.getElementById("cart-body");
 const cartTotalPrice = document.getElementById("cart-total-price");
 const whatsappBtn = document.getElementById("whatsapp-btn");
 const toast = document.getElementById("toast");
+
+// Referências do Checkout (Fase 6)
+const checkoutSection = document.getElementById("checkout-section");
+const enderecoContainer = document.getElementById("endereco-container");
+const trocoContainer = document.getElementById("troco-container");
+const selectBairro = document.getElementById("entrega-bairro");
+const pagamentoTipoSelect = document.getElementById("pagamento-tipo");
+const entregaTipoRadios = document.querySelectorAll('input[name="entrega-tipo"]');
+const cartEntregaRow = document.getElementById("cart-entrega-row");
+const cartEntregaPrice = document.getElementById("cart-entrega-price");
 
 // 4. INICIALIZAÇÃO
 document.addEventListener("DOMContentLoaded", () => {
@@ -156,7 +166,7 @@ function selecionarSabor(nomeSabor) {
     } else {
         // Se tentar escolher mais de 2 sabores
         if (saboresSelecionados.length >= 2) {
-            mostrarToast("Você pode escolher no máximo 2 sabores por pote. 🍿");
+            mostrarToast("Você pode escolher no máximo 2 sabores por pote.");
             return;
         }
         saboresSelecionados.push(nomeSabor);
@@ -257,7 +267,7 @@ function atualizarResumoPote() {
 // 8. ADICIONAR AO CARRINHO
 function adicionarAoCarrinho() {
     if (!tamanhoSelecionado || saboresSelecionados.length === 0) {
-        mostrarToast("Selecione o tamanho e ao menos 1 sabor antes de adicionar! 🍿");
+        mostrarToast("Selecione o tamanho e ao menos 1 sabor antes de adicionar!");
         return;
     }
 
@@ -295,7 +305,7 @@ function adicionarAoCarrinho() {
     }
 
     salvarEAtualizarCarrinho();
-    mostrarToast("✅ Produto adicionado ao carrinho!");
+    mostrarToast("Produto adicionado ao carrinho!");
 
     // Limpa a seleção para o cliente poder montar outro pote facilmente
     resetarSelecaoPote();
@@ -341,8 +351,24 @@ function salvarEAtualizarCarrinho() {
     atualizarCarrinho();
 }
 
-function calcularTotal() {
+// Subtotal apenas dos potes (sem taxa de entrega)
+function calcularSubtotal() {
     return carrinho.reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
+}
+
+// Taxa de entrega: 0 para retirada, valor do bairro selecionado para entrega
+function calcularTaxaEntrega() {
+    const tipoSelecionado = document.querySelector('input[name="entrega-tipo"]:checked');
+    if (!tipoSelecionado || tipoSelecionado.value !== "entrega") {
+        return 0;
+    }
+    const taxa = parseFloat(selectBairro.value);
+    return Number.isFinite(taxa) ? taxa : 0;
+}
+
+// Total geral = subtotal dos potes + taxa de entrega
+function calcularTotal() {
+    return calcularSubtotal() + calcularTaxaEntrega();
 }
 
 function atualizarCarrinho() {
@@ -354,18 +380,22 @@ function atualizarCarrinho() {
     if (carrinho.length === 0) {
         cartBody.innerHTML = `
             <div class="empty-cart">
-                <div class="empty-cart-icon">🍿</div>
+                <img src="favicon.svg" alt="" class="empty-cart-icon-img">
                 <p>Seu carrinho está vazio</p>
                 <button class="btn btn-primary" onclick="fecharCarrinho()">Voltar ao cardápio</button>
             </div>
         `;
         cartTotalPrice.textContent = "R$ 0,00";
         whatsappBtn.style.display = "none";
+        // Carrinho vazio: esconde o checkout e a linha de taxa de entrega
+        checkoutSection.style.display = "none";
+        cartEntregaRow.style.display = "none";
         return;
     }
 
     // Se houver itens no carrinho
     whatsappBtn.style.display = "flex";
+    checkoutSection.style.display = "block";
     cartBody.innerHTML = "";
 
     carrinho.forEach((item, index) => {
@@ -383,7 +413,7 @@ function atualizarCarrinho() {
         cartItemEl.className = "cart-item";
         cartItemEl.innerHTML = `
             <div class="cart-item-info">
-                <div class="cart-item-title">🍿 Pote ${item.tamanho}</div>
+                <div class="cart-item-title">Pote ${item.tamanho}</div>
                 <div class="cart-item-sabores">Sabores: ${item.sabores.join(" + ")}</div>
                 ${adicionaisHtml}
                 ${obsHtml}
@@ -399,37 +429,102 @@ function atualizarCarrinho() {
         cartBody.appendChild(cartItemEl);
     });
 
+    const taxaEntrega = calcularTaxaEntrega();
     const total = calcularTotal();
     cartTotalPrice.textContent = `R$ ${total.toFixed(2).replace(".", ",")}`;
+
+    // Linha de taxa de entrega no resumo (aparece apenas na modalidade Entrega)
+    if (taxaEntrega > 0) {
+        cartEntregaRow.style.display = "flex";
+        cartEntregaPrice.textContent = `R$ ${taxaEntrega.toFixed(2).replace(".", ",")}`;
+    } else {
+        cartEntregaRow.style.display = "none";
+        cartEntregaPrice.textContent = "Grátis";
+    }
 }
 
 // 10. INTEGRAÇÃO COM WHATSAPP
 function gerarMensagemWhatsApp() {
-    let mensagem = "*Olá! Gostaria de fazer um pedido na BK Pipocas Gourmet*\n\n*ITENS DO PEDIDO:*\n----------------------------------------\n";
+    const nome = document.getElementById("cliente-nome").value.trim() || "Cliente";
+    const tipoEntrega = document.querySelector('input[name="entrega-tipo"]:checked').value;
+    const formaPagamento = document.getElementById("pagamento-tipo").options[document.getElementById("pagamento-tipo").selectedIndex].text;
+    
+    let mensagem = `*Olá! Me chamo ${nome} e gostaria de fazer um pedido na BK Pipocas Gourmet*\n\n*ITENS DO PEDIDO:*\n----------------------------------------\n`;
 
+    let subtotalPotes = 0;
     carrinho.forEach((item, index) => {
         const itemSubtotal = item.preco * item.quantidade;
+        subtotalPotes += itemSubtotal;
+        
         mensagem += `*${index + 1}. Pote ${item.tamanho}* (${item.quantidade}x)\n`;
         mensagem += `   • Sabores: ${item.sabores.join(" + ")}\n`;
         if (item.adicionais && item.adicionais.length > 0) {
             mensagem += `   • Adicionais: ${item.adicionais.join(", ")}\n`;
         }
         if (item.observacao) {
-            mensagem += `   • Obs: ${item.observacao}\n`;
+            mensagem += `   • Observações: ${item.observacao}\n`;
         }
-        mensagem += `   • Subtotal: R$ ${itemSubtotal.toFixed(2).replace(".", ",")}\n\n`;
+        mensagem += `   • Subtotal Item: R$ ${itemSubtotal.toFixed(2).replace(".", ",")}\n\n`;
     });
 
+    mensagem += `----------------------------------------\n`;
+    mensagem += `*DADOS DA ENTREGA & PAGAMENTO:*\n`;
+    
+    if (tipoEntrega === "retirada") {
+        mensagem += `- Retirada na Loja (Grátis)\n`;
+    } else {
+        const bairroTexto = selectBairro.options[selectBairro.selectedIndex].text;
+        const endereco = document.getElementById("entrega-endereco").value.trim() || "Não preenchido";
+        mensagem += `- Entrega em Casa (Motoboy)\n`;
+        mensagem += `- Bairro: ${bairroTexto}\n`;
+        mensagem += `- Endereço: ${endereco}\n`;
+    }
+
+    mensagem += `- Pagamento: ${formaPagamento}\n`;
+    
+    const pagTipoValue = document.getElementById("pagamento-tipo").value;
+    if (pagTipoValue === "dinheiro") {
+        const troco = document.getElementById("pagamento-troco").value.trim();
+        if (troco) {
+            mensagem += `- Troco para: ${troco}\n`;
+        }
+    }
+
+    const taxaEntregaMsg = calcularTaxaEntrega();
     const total = calcularTotal();
     mensagem += `----------------------------------------\n`;
-    mensagem += `*VALOR TOTAL: R$ ${total.toFixed(2).replace(".", ",")}*\n\n`;
-    mensagem += "Aguardo a confirmação do pedido! Obrigado(a).";
+    mensagem += `*SUBTOTAL POTES: R$ ${subtotalPotes.toFixed(2).replace(".", ",")}*\n`;
+    mensagem += taxaEntregaMsg > 0
+        ? `*TAXA DE ENTREGA: R$ ${taxaEntregaMsg.toFixed(2).replace(".", ",")}*\n`
+        : `*TAXA DE ENTREGA: Grátis (Retirada na Loja)*\n`;
+    mensagem += `*VALOR TOTAL DO PEDIDO: R$ ${total.toFixed(2).replace(".", ",")}*\n\n`;
+    mensagem += "Aguardo a confirmação! Obrigado(a).";
 
     return mensagem;
 }
 
 function enviarParaWhatsApp() {
     if (carrinho.length === 0) return;
+
+    // Validação básica do formulário antes de enviar
+    const nome = document.getElementById("cliente-nome").value.trim();
+    if (!nome) {
+        mostrarToast("Por favor, informe seu nome.");
+        return;
+    }
+
+    const tipoEntrega = document.querySelector('input[name="entrega-tipo"]:checked').value;
+    if (tipoEntrega === "entrega") {
+        if (selectBairro.value === "0") {
+            mostrarToast("Por favor, selecione seu bairro para entrega.");
+            return;
+        }
+        const endereco = document.getElementById("entrega-endereco").value.trim();
+        if (!endereco) {
+            mostrarToast("Por favor, informe seu endereço completo.");
+            return;
+        }
+    }
 
     const mensagemFormatada = gerarMensagemWhatsApp();
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagemFormatada)}`;
@@ -466,5 +561,22 @@ function configurarEventos() {
         if (e.target === cartModal) {
             fecharCarrinho();
         }
+    });
+
+    // Fase 6: Alternar endereço conforme retirada/entrega e recalcular taxa
+    entregaTipoRadios.forEach(radio => {
+        radio.addEventListener("change", () => {
+            const isEntrega = radio.value === "entrega" && radio.checked;
+            enderecoContainer.style.display = isEntrega ? "block" : "none";
+            atualizarCarrinho();
+        });
+    });
+
+    // Recalcula o total quando o bairro de entrega muda
+    selectBairro.addEventListener("change", atualizarCarrinho);
+
+    // Alternar campo de troco quando o pagamento é "dinheiro"
+    pagamentoTipoSelect.addEventListener("change", () => {
+        trocoContainer.style.display = pagamentoTipoSelect.value === "dinheiro" ? "block" : "none";
     });
 }
